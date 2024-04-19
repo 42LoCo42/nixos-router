@@ -1,4 +1,4 @@
-{ lib, my-utils, pkgs, ... }:
+{ config, lib, my-utils, pkgs, ... }:
 let
   wanIF = "enp1s0";
   lanIF = "wlp2s0u1";
@@ -102,9 +102,8 @@ in
       radios.${lanIF} = {
         networks.${lanIF} = {
           ssid = "Infernum";
-          authentication.saePasswords = [{
-            password = "password";
-          }];
+          authentication.saePasswordsFile =
+            config.aquaris.secrets."machine/sae-password".outPath;
         };
       };
     };

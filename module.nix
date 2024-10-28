@@ -173,7 +173,7 @@ in
         radios.${cfg.lanIF} = {
           channel = 6;
 
-          networks.default = {
+          networks.${cfg.lanIF} = {
             inherit (cfg.wlan) ssid;
             authentication.saePasswordsFile = cfg.wlan.passwordFile;
             ignoreBroadcastSsid = mkIf cfg.wlan.hide "empty";

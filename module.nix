@@ -176,7 +176,7 @@ in
           networks.default = {
             inherit (cfg.wlan) ssid;
             authentication.saePasswordsFile = cfg.wlan.passwordFile;
-            ignoreBroadcastSsid = mkIf cfg.wlan.hidden "empty";
+            ignoreBroadcastSsid = mkIf cfg.wlan.hide "empty";
           };
         };
       };

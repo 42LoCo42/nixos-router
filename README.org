@@ -31,6 +31,8 @@ And configure it like this:
 #+begin_src nix
   {
     services.router = {
+      enable = true;
+
       lanIF = "wlan0";
       wanIF = "eth0";
 
@@ -58,3 +60,26 @@ The file =wlan.der= can now be deleted. Its contents are part of =wlan-password.
 Speaking of, check out that file to get the WLAN password!
 You can also select a longer one from the list (but you can't pick your own due to how SAE-PK works).
 To change the password, just put it after ~sae_password=~ e.g. ~sae_password=YOUR-PASS-WORD|pk=...~.
+
+** WLAN QR code
+Tired of manually entering passwords?
+Run =sudo qr= to display a QR code that you can scan with your phone
+to automatically connect to the WLAN!
+
+** All options
+*** Main options (=services.router=)
+- =enable= (bool): Enable this module. Default: false
+- =lanIF= (string): Name of the LAN (internal) network interface. *Required!*
+- =wanIF= (string): Name of the WAN (external) network interface. *Required!*
+- =lanIP= (string): LAN IP of the router. Default: =10.0.0.1=
+- =lanSize= (number, 0..32): Size of the LAN in CIDR notation (the part after the slash). Default: 24
+- =lanAlloc= (string): DHCP allocation range & duration.
+  Must match =lanIP= and =lanSize=! Default: =10.0.0.2,10.0.0.254,12h=
+- =blockFakeLocals= (bool): Whether to block incoming connections on the WAN
+  that originate from [[https://datatracker.ietf.org/doc/html/rfc1918#section-3][local IP ranges]]. Disable this when testing in a VM! Default: true
+
+*** WLAN options (=services.router.wlan=)
+- =enable= (bool): Enable the WLAN. Default: true
+- =ssid= (string): SSID of the WLAN. *Required!*
+- =passwordFile= (path): Path to the SAE password file. *Required!*
+- =hide= (bool): Ignore SSID broadcast requests to hide the WLAN. Default: false

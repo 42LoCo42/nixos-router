@@ -16,20 +16,15 @@ Simply include the module in your NixOS config flake:
       nixos-router.url = "github:42LoCo42/nixos-router";
       # no need to "follow" any inputs!
     };
-
-    outputs = { nixpkgs, nixos-router, ... }: {
-      nixosConfigurations.example = nixpkgs.lib.nixosSystem {
-        modules = [
-          nixos-router.nixosModules.default
-        ];
-      };
-    };
   }
 #+end_src
 
 And configure it like this:
 #+begin_src nix
-  {
+  # configuration.nix
+  { self, ... }: {
+    imports = [ self.inputs.nixos-router.nixosModules.default ];
+
     services.router = {
       enable = true;
 

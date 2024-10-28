@@ -45,15 +45,15 @@ You need a SAE password file to use WLAN; to generate it do this:
   nix shell nixpkgs#openssl github:42LoCo42/obscura#sae_pk_gen
 
   # generate the EC keypair
-  openssl ecparam -name prime256v1 -genkey -noout -out wlan.der -outform der
+  openssl ecparam -name prime256v1 -genkey -noout -out wlan-password.der -outform der
 
   # convert to SAE password file
   # use the same SSID here!
-  sae_pk_gen wlan.der 3 "My Network" |
+  sae_pk_gen wlan-password.der 3 "My Network" |
       sed 's|sae_password=||' >wlan-password.sae
 #+end_src
 
-The file =wlan.der= can now be deleted. Its contents are part of =wlan-password.sae=.
+The file =wlan-password.der= can now be deleted. Its contents are part of =wlan-password.sae=.
 Speaking of, check out that file to get the WLAN password!
 
 You can also select a longer one from the list in the file (but you can't pick your own due to how SAE-PK works).

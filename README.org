@@ -1,0 +1,60 @@
+* nixos-router
+A simple module to make NixOS act as a router!
+
+This uses:
+- [[https://nftables.org/][nftables]] for firewalling & NAT,
+- [[https://thekelleys.org.uk/dnsmasq/doc.html][dnsmasq]] as a DHCP server; it also forwards DNS to...
+- [[https://dnsprivacy.org/dns_privacy_daemon_-_stubby/][stubby]] for secure DNS over TLS & DNSSEC validation
+- [[https://w1.fi/hostapd/][hostapd]] for running a WLAN Access Point with WPA3 SAE-PK security
+
+** Usage
+Simply include the module in your NixOS config flake:
+#+begin_src nix
+  # flake.nix
+  {
+    inputs = {
+      nixos-router.url = "github:42LoCo42/nixos-router";
+      # no need to "follow" any inputs!
+    };
+
+    outputs = { nixpkgs, nixos-router, ... }: {
+      nixosConfigurations.example = nixpkgs.lib.nixosSystem {
+        modules = [
+          nixos-router.nixosModules.default
+        ];
+      };
+    };
+  }
+#+end_src
+
+And configure it like this:
+#+begin_src nix
+  {
+    services.router = {
+      lanIF = "wlan0";
+      wanIF = "eth0";
+
+      wlan = {
+        ssid = "My Network";
+        passwordFile = "/var/lib/wlan-password.sae";
+      };
+    };
+  }
+#+end_src
+
+You need a SAE password file to use WLAN; to generate it do this:
+#+begin_src shell
+  # obtain required tools:
+  nix shell nixpkgs#openssl github:42LoCo42/obscura#sae_pk_gen
+
+  # generate the EC keypair:
+  openssl ecparam -name prime256v1 -genkey -noout -out wlan.der -outform der
+
+  # convert to SAE password file:
+  sae_pk_gen wlan.der 3 "My Network" >wlan-password.sae # use the same SSID here!
+#+end_src
+
+The file =wlan.der= can now be deleted. Its contents are part of =wlan-password.sae=.
+Speaking of, check out that file to get the WLAN password!
+You can also select a longer one from the list (but you can't pick your own due to how SAE-PK works).
+To change the password, just put it after ~sae_password=~ e.g. ~sae_password=YOUR-PASS-WORD|pk=...~.

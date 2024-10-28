@@ -157,12 +157,15 @@ in
       };
     }
 
-    (mkIf (config ? "aquaris.persist") {
-      aquaris.persist = {
-        enable = true;
-        dirs = [ "/var/lib/dnsmasq" ];
-      };
-    })
+    (mkIf
+      (
+        config ? "aquaris" &&
+        config.aquaris ? "persist" &&
+        config.aquaris.persist.enable
+      )
+      {
+        aquaris.persist.dirs = [ "/var/lib/dnsmasq" ];
+      })
 
     (mkIf cfg.wlan.enable {
       services.hostapd = {

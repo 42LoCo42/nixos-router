@@ -116,7 +116,7 @@ in
           settings = {
             interface = cfg.lanIF;
             bind-interfaces = true;
-            listen-address = [ "127.0.0.1" cfg.lanIF ];
+            listen-address = [ "127.0.0.1" cfg.lanIP ];
 
             # forward to stubby
             server = [ "127.0.0.1#53000" ];

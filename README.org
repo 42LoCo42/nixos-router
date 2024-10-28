@@ -46,25 +46,33 @@ And configure it like this:
 
 You need a SAE password file to use WLAN; to generate it do this:
 #+begin_src shell
-  # obtain required tools:
+  # obtain required tools
   nix shell nixpkgs#openssl github:42LoCo42/obscura#sae_pk_gen
 
-  # generate the EC keypair:
+  # generate the EC keypair
   openssl ecparam -name prime256v1 -genkey -noout -out wlan.der -outform der
 
-  # convert to SAE password file:
-  sae_pk_gen wlan.der 3 "My Network" >wlan-password.sae # use the same SSID here!
+  # convert to SAE password file
+  # use the same SSID here!
+  sae_pk_gen wlan.der 3 "My Network" |
+      sed 's|sae_password=||' >wlan-password.sae
 #+end_src
 
 The file =wlan.der= can now be deleted. Its contents are part of =wlan-password.sae=.
 Speaking of, check out that file to get the WLAN password!
-You can also select a longer one from the list (but you can't pick your own due to how SAE-PK works).
-To change the password, just put it after ~sae_password=~ e.g. ~sae_password=YOUR-PASS-WORD|pk=...~.
+
+You can also select a longer one from the list in the file (but you can't pick your own due to how SAE-PK works).
+To change the password, just put it at the start of the line that's not a comment!
+#+begin_src text
+  YOUR-WLAN-PASS-WORD|pk=<very long string>
+#+end_src
 
 ** WLAN QR code
 Tired of manually entering passwords?
 Run =sudo qr= to display a QR code that you can scan with your phone
 to automatically connect to the WLAN!
+
+[[file:qr.png]]
 
 ** All options
 *** Main options (=services.router=)
